@@ -12,10 +12,17 @@
                                 (< (:salary player) (:salary %)))
                            players)))))
 
+(defn remove-duplicate-salaries
+  "Only keep 1 player with the same salary and projected points"
+  [players]
+  (let [grouped-salary-map (group-by :salary players)]
+      (for [[k v] grouped-salary-map] (first v))))
+
 (defn eliminate-players
   "Get rid of any players who could not possibly be optimal"
   [players]
-  (for [p players :when (potential-player? p players)] p))
+  (-> (for [p players :when (potential-player? p players)] p)
+      remove-duplicate-salaries))
 
 (def positions
   "List of positions that make up a team"

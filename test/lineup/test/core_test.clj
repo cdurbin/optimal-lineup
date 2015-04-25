@@ -58,7 +58,7 @@
     (is (= #{"Bob" "John"}
            (set (map :name (players/eliminate-players sample-players))))))
   (testing "Multiple at same projection"
-    (is (= #{"Twin1" "Twin2"}
+    (is (= (or #{"Twin1"} #{"Twin2"})
            (set (map :name (players/eliminate-players
                              [{:name "Twin1" :projection 30 :salary 4500}
                               {:name "Twin2" :projection 30 :salary 4500}
@@ -90,6 +90,12 @@
         eliminated-players (clojure.set/difference (set players) (set potential-players))]
     ; {:potential-players potential-players :eliminated-players eliminated-players}))
     {:potential-players potential-players}))
+
+(comment
+  (players/eliminate-players [{:name "Twin1" :projection 30 :salary 4500}
+                              {:name "Twin2" :projection 30 :salary 4500}
+                              {:name "Worse" :projection 20 :salary 4500}
+                              {:name "Expensive" :projection 30 :salary 9000}]))
 
 (comment
   (random-players-manual-check 1500)
