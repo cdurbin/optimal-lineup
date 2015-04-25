@@ -3,26 +3,27 @@
 
 (defn potential-player?
   "Returns true if the player could be used in an optimal lineup and false otherwise. Figure out
-  if there is any cheaper player with higher projected points."
-  [player players]
-  (not (some? (seq (remove #(or (> (:projection player) (:projection %))
-                                (= (:name player) (:name %))
-                                (and (= (:projection player) (:projection %))
-                                     (= (:salary player) (:salary %)))
-                                (< (:salary player) (:salary %)))
-                           players)))))
+  if there are at least n cheaper players with higher projected points."
+  [player players n]
+  (not (< (dec n)
+          (count (remove (fn [other] (or (> (:projection player) (:projection other))
+                                         (= (:name player) (:name other))
+                                         (and (= (:projection player) (:projection other))
+                                              (= (:salary player) (:salary other)))
+                                         (< (:salary player) (:salary other))))
+                         players)))))
 
 (defn remove-duplicate-salaries
   "Only keep 1 player with the same salary and projected points"
-  [players]
+  [players n]
   (let [grouped-salary-map (group-by :salary players)]
-      (for [[k v] grouped-salary-map] (first v))))
+    (flatten (for [[k v] grouped-salary-map] (take n v)))))
 
 (defn eliminate-players
   "Get rid of any players who could not possibly be optimal"
-  [players]
-  (-> (for [p players :when (potential-player? p players)] p)
-      remove-duplicate-salaries))
+  [players n]
+  (-> (for [p players :when (potential-player? p players n)] p)
+      (remove-duplicate-salaries n)))
 
 (def positions
   "List of positions that make up a team"

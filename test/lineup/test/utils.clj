@@ -69,7 +69,6 @@
       :projection (random-projection)}
      fixed-attributes)))
 
-;; sampling generated input range
 (comment
   (random-salary)
   (random-projection)
