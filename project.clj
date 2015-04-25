@@ -2,7 +2,8 @@
   :description "Optimal lineup application"
   ; :url "FIXME"
 
-  :dependencies [[org.clojure/clojure "1.6.0"]]
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 [org.clojure/test.check "0.7.0"]]
 
   :plugins [[lein-test-out "0.3.1"]
             [lein-exec "0.3.2"]]
