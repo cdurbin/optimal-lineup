@@ -14,16 +14,21 @@
                          players)))))
 
 (defn remove-duplicate-salaries
-  "Only keep 1 player with the same salary and projected points"
+  "Only keep n players with the same salary and projected points"
   [players n]
-  (let [grouped-salary-map (group-by :salary players)]
-    (flatten (for [[k v] grouped-salary-map] (take n v)))))
+  (flatten (for [[k v] (group-by :salary players)] (take n v))))
+
+(defn sort-by-salary
+  "Sort map of players by salary ascending"
+  [players]
+  (sort-by (juxt :salary :projection) players))
 
 (defn eliminate-players
   "Get rid of any players who could not possibly be optimal"
   [players n]
   (-> (for [p players :when (potential-player? p players n)] p)
-      (remove-duplicate-salaries n)))
+      (remove-duplicate-salaries n)
+      sort-by-salary))
 
 (def positions
   "List of positions that make up a team"
