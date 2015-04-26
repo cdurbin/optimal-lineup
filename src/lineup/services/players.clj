@@ -1,6 +1,8 @@
 (ns lineup.services.players
   (require [clojure.string :as str]))
 
+(def min-player-salary 4500)
+
 (defn potential-player?
   "Returns true if the player could be used in an optimal lineup and false otherwise. Figure out
   if there are at least n cheaper players with higher projected points."
@@ -29,29 +31,4 @@
   (-> (for [p players :when (potential-player? p players n)] p)
       (remove-duplicate-salaries n)
       sort-by-salary))
-
-(def min-player-salary 4500)
-
-(defn lineup->string
-  "Takes a collection of player maps. The keys in the map are :position :name :salary :projection.
-  Returns a string representing the players"
-  [players]
-  (for [p players]
-    (format "%s: %s Salary: [%d] Projection: [%.1f]"
-            (-> (:position p) name str/upper-case)
-            (:name p)
-            (:salary p)
-            (:projection p))))
-
-(defn lineup->total-salary
-  "Returns the total salary for a lineup"
-  [players]
-  (reduce + (map #(:salary %) players)))
-
-(defn lineup->total-projected-points
-  "Returns the total projected points for a lineup"
-  [players]
-  (reduce + (map #(:projection %) players)))
-
-
 
