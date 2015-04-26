@@ -66,6 +66,4 @@
                (reset! best-projected-points projected-points)
                (reset! best-lineup {:qb qb :rb1 rb1 :rb2 rb2 :wr1 wr1 :wr2 wr2 :wr3 wr3 :te te
                                     :def defense :k k}))))
-
-    ; player-maps))
     @best-lineup))
