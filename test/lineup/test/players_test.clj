@@ -1,4 +1,4 @@
-(ns lineup.test.core-test
+(ns lineup.test.players-test
   (:require [clojure.test :refer :all]
             [lineup.services.players :as players]
             [clojure.test.check.generators :as gen]
@@ -77,14 +77,6 @@
     (is (= 168.5 (players/lineup->total-projected-points sample-team)))))
 
 
-(defn random-players-manual-check
-  [num-players n]
-  (let [players (-> (repeatedly num-players utils/random-player))
-        potential-players (players/eliminate-players players n)
-        eliminated-players (clojure.set/difference (set players) (set potential-players))]
-    ; {:potential-players potential-players :eliminated-players eliminated-players}))
-    {:potential-players potential-players}))
-
 (comment
   (players/eliminate-players [{:name "Twin1" :projection 30 :salary 4500}
                               {:name "Twin2" :projection 30 :salary 4500}
@@ -92,9 +84,6 @@
                               {:name "Expensive" :projection 30 :salary 9000}]
                              3))
 
-(comment
-  (random-players-manual-check 1500 2)
-  )
 ;; Generative tests
 
 (deftest random-lineup

@@ -1,6 +1,7 @@
 (ns lineup.test.utils
   (:require [clojure.test :refer :all]
             [lineup.services.players :as players]
+            [lineup.services.team :as team]
             [clojure.test.check.generators :as gen]
             [clojure.string :as str]))
 
@@ -28,19 +29,10 @@
       (/ 10)
       float))
 
-(def positions
-  "All positions"
-  #{:qb
-    :rb
-    :wr
-    :te
-    :def
-    :k})
-
 (defn random-position
   "Pick a position at random"
   []
-  (rand-nth (seq positions)))
+  (rand-nth (keys team/num-players-by-position)))
 
 (def first-names
   "Collection of all potential first names"
@@ -68,6 +60,18 @@
       :salary (random-salary)
       :projection (random-projection)}
      fixed-attributes)))
+
+(defn random-players-manual-check
+  [num-players n]
+  (let [players (-> (repeatedly num-players random-player))
+        potential-players (players/eliminate-players players n)
+        eliminated-players (clojure.set/difference (set players) (set potential-players))]
+    ; {:potential-players potential-players :eliminated-players eliminated-players}))
+    {:potential-players potential-players}))
+
+(comment
+  (random-players-manual-check 500 2)
+  )
 
 (comment
   (random-salary)

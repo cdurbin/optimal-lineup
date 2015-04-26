@@ -30,11 +30,6 @@
       (remove-duplicate-salaries n)
       sort-by-salary))
 
-(def positions
-  "List of positions that make up a team"
-  #{:qb :rb1 :rb2 :wr1 :wr2 :wr3 :te :k :def})
-
-(def max-total-salary 60000)
 (def min-player-salary 4500)
 
 (defn lineup->string
