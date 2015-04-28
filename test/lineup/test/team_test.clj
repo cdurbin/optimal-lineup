@@ -65,8 +65,15 @@
   (utils/random-players-manual-check 500 2)
 
   (team/potential-players-by-position (repeatedly 100 utils/random-player))
-  (def the-team (team/optimal-team (repeatedly 80 utils/random-player)))
-  (def players-on-team (for [[k v] the-team] v))
+
+  (def the-players (repeatedly 180 utils/random-player))
+  (def baseline-optimal (time (team/optimal-team the-players)))
+  (def optimal-tweaked (time (team/optimal-team-with-optimizations the-players)))
+
+
+  ; (def the-team (team/optimal-team (repeatedly 80 utils/random-player)))
+  (def players-on-baseline-team (for [[k v] baseline-optimal] v))
+  (def players-on-team (for [[k v] optimal-tweaked] v))
   (team/lineup->string players-on-team)
   (team/lineup->total-salary players-on-team)
   (team/lineup->total-projected-points players-on-team)
