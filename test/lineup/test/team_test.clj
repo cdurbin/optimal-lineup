@@ -66,7 +66,7 @@
 
   (team/potential-players-by-position (repeatedly 100 utils/random-player))
 
-  (def the-players (repeatedly 500 utils/random-player))
+  (def the-players (repeatedly 50 utils/random-player))
   (def baseline-optimal (time (team/optimal-team the-players)))
   (def optimal-tweaked (time (team/optimal-team-with-optimizations the-players)))
 

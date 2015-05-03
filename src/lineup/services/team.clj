@@ -76,8 +76,6 @@
         best-lineup (atom {})
         max-value-by-pos (into {} (for [[k v] player-maps]
                                     {k (apply max (map :projection v))}))]
-    (println max-value-by-pos)
-
     (doall (for [qb (:qb player-maps)
                  rb1 (:rb player-maps)
                  wr1 (:wr player-maps)
@@ -116,10 +114,16 @@
                                             :when (and (not= (:name wr1) (:name wr3))
                                                        (not= (:name wr2) (:name wr3))
                                                        (<= @best-projected-points projected-points))
-                                            :while (>= max-total-salary (+ (:salary qb) (:salary rb1) (:salary rb2)
-                                                                           (:salary wr1) (:salary wr2) (:salary wr3)
-                                                                           (:salary te) (:salary defense)
-                                                                           (:salary k)))]
+                                            :while (and (>= max-total-salary (+ (:salary qb) (:salary rb1) (:salary rb2)
+                                                                                (:salary wr1) (:salary wr2) (:salary wr3)
+                                                                                (:salary te) (:salary defense)
+                                                                                (:salary k)))
+                                                        (<= @best-projected-points
+                                                            (+ (:projection qb) (:projection rb1)
+                                                               (:projection rb2) (:projection wr1)
+                                                               (:projection wr2) (:wr max-value-by-pos)
+                                                               (:projection te) (:projection defense)
+                                                               (:projection k))))]
                                         (do
                                           (reset! best-projected-points projected-points)
                                           (reset! best-lineup {:qb qb :rb1 rb1 :rb2 rb2 :wr1 wr1 :wr2 wr2 :wr3 wr3 :te te
