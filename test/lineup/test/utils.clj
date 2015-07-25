@@ -3,7 +3,8 @@
             [lineup.services.players :as players]
             [lineup.services.team :as team]
             [clojure.test.check.generators :as gen]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.set :as set]))
 
 (def ^:private random-salary-helper
   "Return a generator which generates values between 45 and 100."
@@ -15,7 +16,6 @@
   (-> (gen/sample random-salary-helper 1)
       first
       (* 100)))
-
 
 (def ^:private random-projection-helper
   "Return a generator which generates values between 0 and 250."
@@ -38,7 +38,7 @@
   "Collection of all potential first names"
   (->> (slurp "resources/firstnames.txt")
        str/split-lines
-       (map #(str/capitalize %))))
+       (map str/capitalize)))
 
 (def last-names
   "Collection of all potential last names"
@@ -65,12 +65,12 @@
   [num-players n]
   (let [players (-> (repeatedly num-players random-player))
         potential-players (players/eliminate-players players n)
-        eliminated-players (clojure.set/difference (set players) (set potential-players))]
-    ; {:potential-players potential-players :eliminated-players eliminated-players}))
+        eliminated-players (set/difference (set players) (set potential-players))]
     {:potential-players potential-players}))
 
 (comment
   (random-players-manual-check 500 2)
+  (System/getenv)
   )
 
 (comment
@@ -81,7 +81,3 @@
   (map #(* 100 %) (gen/sample random-salary 1))
   (map #(/ % 10) (gen/sample random-projection))
   (rand-nth last-names))
-; --> (5 6 9 8 8 9 8 6 9 9)
-; ;; not losing the optional size param
-; (gen/sample five-through-nine 2)
-; --> (6 6)
