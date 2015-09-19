@@ -66,7 +66,26 @@
 
   (team/potential-players-by-position (repeatedly 100 utils/random-player))
 
-  (def the-players (repeatedly 1000 utils/random-player))
+  (def the-players (repeatedly 100 utils/random-player))
+
+  (def db-players
+    (->> (clojure.java.jdbc/query lineup.data.database/db
+                                  "select * from weekly_rankings where week = 2 and salary > 0 and ppr > 0")
+         (map #(assoc % :position (keyword (clojure.string/lower-case (:position %)))))
+         (map #(assoc % :projection (:ppr %)))
+         (map #(select-keys % [:position :name :salary :projection]))
+         (filter #(> (:projection %) 5))
+         (cons {:name "Some kicker" :position :k :salary 4500 :projection 0.0})))
+
+  (distinct (map :position db-players))
+
+  (def optimal-db-tweaked (time (team/optimal-team-with-optimizations db-players)))
+
+  (team/lineup->string optimal-db-tweaked)
+  (team/lineup->total-salary optimal-db-tweaked)
+  (team/lineup->total-projected-points optimal-db-tweaked)
+
+
   (def baseline-optimal (time (team/optimal-team the-players)))
   (def optimal-tweaked (time (team/optimal-team-with-optimizations the-players)))
   (def dryer-optimized (time (team/dryer-optimize the-players)))

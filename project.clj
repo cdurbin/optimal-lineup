@@ -1,9 +1,10 @@
 (defproject cdd/lineup "0.1.0-SNAPSHOT"
   :description "Optimal lineup application"
-  ; :url "FIXME"
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/test.check "0.7.0"]]
+                 [org.clojure/test.check "0.7.0"]
+                 [org.clojure/java.jdbc "0.4.2"]
+                 [org.xerial/sqlite-jdbc "3.7.2"]]
 
   :plugins [[lein-test-out "0.3.1"]
             [lein-exec "0.3.2"]]
