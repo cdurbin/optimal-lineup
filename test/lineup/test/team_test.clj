@@ -74,9 +74,12 @@
 
 (comment
 
-  (def standard-db-players (get-db-players 2 :ppr))
-  (def high-db-players (get-db-players 2 :ppr_high))
-  (def safe-db-players (get-db-players 2 :ppr_low))
+  (do
+    (def standard-db-players (get-db-players 2 :ppr))
+    (def high-db-players (get-db-players 2 :ppr_high))
+    (def safe-db-players (get-db-players 2 :ppr_low)))
+
+  (players/sort-by-salary standard-db-players)
 
   (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
   (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
