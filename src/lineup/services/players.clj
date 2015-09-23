@@ -3,6 +3,7 @@
 
 (def min-salary 4500)
 (def two-min-salaries (* 2 min-salary))
+(def three-min-salaries (* 3 min-salary))
 
 (defn potential-player?
   "Returns true if the player could be used in an optimal lineup and false otherwise. Figure out
