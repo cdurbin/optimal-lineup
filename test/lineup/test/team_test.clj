@@ -65,25 +65,29 @@
   [week field]
   (->> (clojure.java.jdbc/query lineup.data.database/db
                                   (str "select * from weekly_rankings where week = "
-                                        week " and salary > 0 and " (name field) " > 0"))
+                                        week " and salary > 0 and " (name field) " > 0"
+                                        " and (game_status is null or game_status not in "
+                                        "('Out', 'Suspended'))"))
          (map #(assoc % :position (keyword (clojure.string/lower-case (:position %)))))
          (map #(assoc % :projection (field %)))
          (map #(select-keys % [:position :name :salary :projection]))
-         (filter #(> (:projection %) 5))
+         (filter #(>= (:projection %) 2))
          (cons {:name "Some kicker" :position :k :salary 4500 :projection 0.0})))
 
 (comment
 
   (do
-    (def standard-db-players (get-db-players 2 :ppr))
-    (def high-db-players (get-db-players 2 :ppr_high))
-    (def safe-db-players (get-db-players 2 :ppr_low)))
+    (def standard-db-players (get-db-players 4 :ppr))
+    (def high-db-players (get-db-players 4 :ppr_high))
+    (def safe-db-players (get-db-players 4 :ppr_low)))
 
   (players/sort-by-salary standard-db-players)
 
-  (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
-  (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
-  (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players)))
+  (do
+    (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
+    (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
+    (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players))))
+
 
   (team/lineup->string optimal-standard)
   (team/lineup->total-salary optimal-standard)

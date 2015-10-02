@@ -35,7 +35,7 @@
 (defn lineup->total-salary
   "Returns the total salary for a lineup"
   [lineup]
-  (reduce + (* players/min-salary (- (count team-positions) (count (keys lineup))))
+  (reduce + (* players/min-player-salary (- (count team-positions) (count (keys lineup))))
           (map :salary (vals lineup))))
 
 (defn lineup->total-projected-points
@@ -53,8 +53,17 @@
       (let [use-multiple-per-position? (not= 0 last-top-score)
             player-maps (into {} (for [[k v] (potential-players-by-position players use-multiple-per-position?)]
                                    {k (players/sort-by-salary v)}))
+            wr1-map (->> (:wr player-maps)
+                         (drop-last 2))
+            wr2-map (->> (:wr player-maps)
+                         rest
+                         drop-last)
+            wr3-map (->> (:wr player-maps)
+                         (drop 2))
             max-value-by-pos (into {} (for [[k v] player-maps]
-                                        {k (apply max (map :projection v))}))]
+                                        {k (apply max (map :projection v))}))
+            ]
+            ; (println "max-value-by-pos=" max-value-by-pos)
         (doall (for [qb (:qb player-maps)
                      rb1 (:rb player-maps)
                      wr1 (:wr player-maps)]
@@ -85,7 +94,7 @@
                                             (doall (for [te (:te player-maps)
                                                          :while (and (>= max-total-salary (+ (:salary qb) (:salary rb1) (:salary rb2)
                                                                                              (:salary wr1) (:salary wr2) (:salary wr3)
-                                                                                             (:salary te) players/min-salary))
+                                                                                             (:salary te) players/min-defense-salary))
                                                                      (<= @best-projected-points
                                                                          (+ (:projection qb) (:projection rb1)
                                                                             (:projection rb2) (:projection wr1)
@@ -112,69 +121,6 @@
         (if-not (= last-top-score 0)
           @best-lineup
           (recur @best-projected-points))))))
-
-(defn dryer-optimize
-  "Return an optimal team"
-  [players]
-  (let [player-maps (into {} (for [[k v] (potential-players-by-position players)]
-                               {k (players/sort-by-salary v)}))
-        best-projected-points (atom 0)
-        best-lineup (atom {})
-        max-value-by-pos (into {} (for [[k v] player-maps]
-                                    {k (apply max (map :projection v))}))]
-    (doall (for [qb (:qb player-maps)
-                 rb1 (:rb player-maps)
-                 wr1 (:wr player-maps)
-                 te (:te player-maps)
-                 defense (:def player-maps)
-                 k (:k player-maps)]
-             (doall (for [rb2 (:rb player-maps)
-                          :when (not= (:name rb1) (:name rb2))
-                          :while (and (>= max-total-salary (+ (:salary qb) (:salary rb1) (:salary rb2)
-                                                              (:salary wr1) (:salary te) (:salary defense)
-                                                              (:salary k) players/two-min-salaries))
-                                      (<= @best-projected-points
-                                          (+ (:projection qb) (:projection rb1)
-                                             (:rb max-value-by-pos) (:projection wr1)
-                                             (:wr max-value-by-pos) (:wr max-value-by-pos)
-                                             (:projection te) (:projection defense)
-                                             (:projection k))))]
-
-                      (doall (for [wr2 (:wr player-maps)
-                                   :when (not= (:name wr1) (:name wr2))
-                                   :while (and (>= max-total-salary (+ (:salary qb) (:salary rb1) (:salary rb2)
-                                                                       (:salary wr1) (:salary te) (:salary defense)
-                                                                       (:salary k) (:salary wr2) players/min-salary))
-                                               (<= @best-projected-points
-                                                   (+ (:projection qb) (:projection rb1)
-                                                      (:projection rb2) (:projection wr1)
-                                                      (:wr max-value-by-pos) (:wr max-value-by-pos)
-                                                      (:projection te) (:projection defense)
-                                                      (:projection k))))]
-                               (doall (for [wr3 (:wr player-maps)
-                                            :let [projected-points (+ (:projection qb) (:projection rb1)
-                                                                      (:projection rb2) (:projection wr1)
-                                                                      (:projection wr2) (:projection wr3)
-                                                                      (:projection te) (:projection defense)
-                                                                      (:projection k))]
-                                            :when (and (not= (:name wr1) (:name wr3))
-                                                       (not= (:name wr2) (:name wr3))
-                                                       (<= @best-projected-points projected-points))
-                                            :while (and (>= max-total-salary (+ (:salary qb) (:salary rb1) (:salary rb2)
-                                                                                (:salary wr1) (:salary wr2) (:salary wr3)
-                                                                                (:salary te) (:salary defense)
-                                                                                (:salary k)))
-                                                        (<= @best-projected-points
-                                                            (+ (:projection qb) (:projection rb1)
-                                                               (:projection rb2) (:projection wr1)
-                                                               (:projection wr2) (:wr max-value-by-pos)
-                                                               (:projection te) (:projection defense)
-                                                               (:projection k))))]
-                                        (do
-                                          (reset! best-projected-points projected-points)
-                                          (reset! best-lineup {:qb qb :rb1 rb1 :rb2 rb2 :wr1 wr1 :wr2 wr2 :wr3 wr3 :te te
-                                                               :def defense :k k}))))))))))
-    @best-lineup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

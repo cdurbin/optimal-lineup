@@ -1,9 +1,10 @@
 (ns lineup.services.players
   (require [clojure.string :as str]))
 
-(def min-salary 4500)
-(def two-min-salaries (* 2 min-salary))
-(def three-min-salaries (* 3 min-salary))
+(def min-defense-salary 4000)
+(def min-player-salary 4500)
+(def two-min-salaries (+ min-player-salary min-defense-salary))
+(def three-min-salaries (+ min-player-salary min-player-salary min-defense-salary))
 
 (defn potential-player?
   "Returns true if the player could be used in an optimal lineup and false otherwise. Figure out
