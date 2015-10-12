@@ -4,7 +4,10 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/test.check "0.7.0"]
                  [org.clojure/java.jdbc "0.4.2"]
-                 [org.xerial/sqlite-jdbc "3.7.2"]]
+                 [org.xerial/sqlite-jdbc "3.7.2"]
+                 [cheshire "5.5.0"]
+                 [clj-http "2.0.0"]
+                 [camel-snake-kebab "0.3.2"]]
 
   :plugins [[lein-test-out "0.3.1"]
             [lein-exec "0.3.2"]]
