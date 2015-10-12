@@ -1,5 +1,6 @@
 (ns lineup.services.players
-  (require [clojure.string :as str]))
+  (require [clojure.string :as str]
+           [lineup.data.database :as db]))
 
 (def min-defense-salary 4000)
 (def min-player-salary 4500)
@@ -28,10 +29,29 @@
   [players]
   (sort-by (juxt :salary :projection) players))
 
+(defn sort-by-value
+  "Sort players by value (projected points divided by salary) descending."
+  [players]
+  (reverse (sort-by (juxt #(/ (:projection %) (:salary %)) :projection) players)))
+
 (defn eliminate-players
   "Get rid of any players who could not possibly be optimal"
   [players n]
   (-> (for [p players :when (potential-player? p players n)] p)
       (remove-duplicate-salaries n)
       sort-by-salary))
+
+(defn find-eligible-players
+  "Get a list of all of the players to consider for lineups for the given week. Ensures players
+  have a positive value for the provided field."
+  [week field]
+  (->> (db/get-db-players week)
+       (remove #(or (= "Out" (:game_status %))
+                    (= "Doubtful" (:game_status %))
+                    (= "Suspended" (:game_status %))))
+       (filter #(> (field %) 0))
+       (map #(assoc % :position (keyword (str/lower-case (:position %)))))
+       (map #(assoc % :projection (field %)))
+       (map #(select-keys % [:position :name :salary :projection]))
+       (filter #(>= (:projection %) 2))))
 

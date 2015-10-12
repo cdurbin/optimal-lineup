@@ -60,33 +60,21 @@
   (testing "Get total projected points"
     (is (= 168.5 (team/lineup->total-projected-points sample-team)))))
 
-(defn get-db-players
-  "Get players from DB"
-  [week field]
-  (->> (clojure.java.jdbc/query lineup.data.database/db
-                                  (str "select * from weekly_rankings where week = "
-                                        week " and salary > 0 and " (name field) " > 0"
-                                        " and (game_status is null or game_status not in "
-                                        "('Out', 'Suspended'))"))
-         (map #(assoc % :position (keyword (clojure.string/lower-case (:position %)))))
-         (map #(assoc % :projection (field %)))
-         (map #(select-keys % [:position :name :salary :projection]))
-         (filter #(>= (:projection %) 2))
-         (cons {:name "Some kicker" :position :k :salary 4500 :projection 0.0})))
-
 (comment
 
   (do
-    (def standard-db-players (get-db-players 4 :ppr))
-    (def high-db-players (get-db-players 4 :ppr_high))
-    (def safe-db-players (get-db-players 4 :ppr_low)))
+    (def week 4)
+    (def standard-db-players (players/find-eligible-players week :ppr))
+    (def high-db-players (players/find-eligible-players week :ppr_high))
+    (def safe-db-players (players/find-eligible-players week :ppr_low)))
 
   (players/sort-by-salary standard-db-players)
 
   (do
     (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
     (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
-    (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players))))
+    (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players)))
+    (def best-value-lineup (time (team/best-value-team standard-db-players))))
 
 
   (team/lineup->string optimal-standard)
@@ -100,6 +88,10 @@
   (team/lineup->string optimal-safe)
   (team/lineup->total-salary optimal-safe)
   (team/lineup->total-projected-points optimal-safe)
+
+  (team/lineup->string best-value-lineup)
+  (team/lineup->total-salary best-value-lineup)
+  (team/lineup->total-projected-points best-value-lineup)
 
   )
 
