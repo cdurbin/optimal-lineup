@@ -11,7 +11,6 @@
   [week]
   (query db ["select * from weekly_rankings where week = ? and salary > 0" week]))
 
-
 (defn get-matchups
   "Return games which match the given parameters"
   [week start-time end-time]
@@ -30,10 +29,6 @@
               ["select * from schedule where week = ?" week])]
     (query db sql)))
 
-#_(def cached-teams
-    "Cache the teams database table"
-    (query db ["select * from teams"]))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; Populate database tables.
@@ -43,13 +38,20 @@
 (defn save-season-schedule
   "Saves the schedule to the database"
   [schedule]
-  (for [game schedule]
+  (for [game schedule
+        :let [[_ hour-str minute period] (re-find #"(\d+):(\d+) (AM|PM)" (:gameTimeET game))
+              hour (Integer. hour-str)
+              military-hour (if (= "PM" period)
+                              (+ 12 hour)
+                              (if (< 10 hour)
+                                hour
+                                (str "0" hour)))
+              gametime (str (:gameDate game) "T" military-hour ":" minute)]]
     (insert!
       db :schedule {:week (:gameWeek game)
                     :home (:homeTeam game)
                     :away (:awayTeam game)
-                    :date (:gameDate game)
-                    :time (:gameTimeET game)
+                    :time gametime
                     :tv (:tvStation game)
                     :winner (:winner game)})))
 
@@ -76,8 +78,7 @@
                                     [:week :int]
                                     [:home "varchar(3)"]
                                     [:away "varchar(3)"]
-                                    [:date :date]
-                                    [:time :time]
+                                    [:time "varchar(32)"]
                                     [:tv "varchar(32)"]
                                     [:winner "varchar(3)"])))
 
@@ -91,9 +92,3 @@
                     [:full_name "varchar(64)"]
                     [:short_name "varchar(32)"])))
 
-(comment
-
-  (query db "select * from weekly_rankings where name = 'Andrew Luck'")
-  (get-db-players 3 :ppr)
-
-  )

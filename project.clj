@@ -7,7 +7,8 @@
                  [org.xerial/sqlite-jdbc "3.7.2"]
                  [cheshire "5.5.0"]
                  [clj-http "2.0.0"]
-                 [camel-snake-kebab "0.3.2"]]
+                 [camel-snake-kebab "0.3.2"]
+                 [clj-time "0.11.0"]]
 
   :plugins [[lein-test-out "0.3.1"]
             [lein-exec "0.3.2"]]
