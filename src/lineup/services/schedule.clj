@@ -13,7 +13,7 @@
    (db/get-matchups week start-time end-time)))
 
 (comment
-  (count (get-matchups-by-schedule 6 "12:00PM" "3:00PM")))
+  (count (get-matchups-by-schedule 6 "2015-10-18T16:00" "2015-10-18T17:00")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
