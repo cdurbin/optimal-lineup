@@ -1,6 +1,7 @@
 (ns lineup.services.players
   (require [clojure.string :as str]
-           [lineup.data.database :as db]))
+           [lineup.data.database :as db]
+           [lineup.services.schedule :as schedule]))
 
 (def min-defense-salary 4000)
 (def min-player-salary 4500)
@@ -41,11 +42,23 @@
       (remove-duplicate-salaries n)
       sort-by-salary))
 
+(defn filter-players-by-team
+  [players valid-teams]
+  "Filter to only keep players from the provided teams."
+  (filter #(contains? (set valid-teams) (:team %)) players))
+
+(defn filter-players-by-game-time
+  [players week start-time end-time]
+  "Filter players to only keep the ones that play within the provided time range."
+  (let [matchups (schedule/get-matchups-by-schedule week start-time end-time)
+        teams (flatten (conj (map :home matchups) (map :away matchups)))]
+    (filter-players-by-team players teams)))
+
 (defn find-eligible-players
   "Get a list of all of the players to consider for lineups for the given week. Ensures players
   have a positive value for the provided field."
-  [week field]
-  (->> (db/get-db-players week)
+  [week field start-time end-time]
+  (->> (filter-players-by-game-time (db/get-db-players week) week start-time end-time)
        (remove #(or (= "Out" (:game_status %))
                     (= "Doubtful" (:game_status %))
                     (= "Suspended" (:game_status %))))

@@ -63,36 +63,36 @@
 (comment
 
   (do
-    (def week 4)
-    (def standard-db-players (players/find-eligible-players week :ppr))
-    (def high-db-players (players/find-eligible-players week :ppr_high))
-    (def safe-db-players (players/find-eligible-players week :ppr_low)))
-
-  (players/sort-by-salary standard-db-players)
-
-  (do
+    ;; Parameters
+    (def week 6)
+    (def start-time "2015-10-18T10:00")
+    (def end-time "2015-10-18T14:00")
+    ;; Narrow down players
+    (def standard-db-players (players/find-eligible-players week :ppr start-time end-time))
+    (def high-db-players (players/find-eligible-players week :ppr_high start-time end-time))
+    (def safe-db-players (players/find-eligible-players week :ppr_low start-time end-time))
+    ;; Find best lineups
     (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
     (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
     (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players)))
-    (def best-value-lineup (time (team/best-value-team standard-db-players))))
+    (def best-value-lineup (time (team/best-value-team standard-db-players)))
+    ;; Print out lineups
+    (clojure.pprint/pprint (team/lineup->string optimal-standard))
+    (println (team/lineup->total-salary optimal-standard))
+    (println (format "%.2f" (team/lineup->total-projected-points optimal-standard)))
 
+    (clojure.pprint/pprint (team/lineup->string optimal-high))
+    (println (team/lineup->total-salary optimal-high))
+    (println (format "%.2f" (team/lineup->total-projected-points optimal-high)))
 
-  (team/lineup->string optimal-standard)
-  (team/lineup->total-salary optimal-standard)
-  (team/lineup->total-projected-points optimal-standard)
+    (clojure.pprint/pprint (team/lineup->string optimal-safe))
+    (println (team/lineup->total-salary optimal-safe))
+    (println (format "%.2f" (team/lineup->total-projected-points optimal-safe)))
 
-  (team/lineup->string optimal-high)
-  (team/lineup->total-salary optimal-high)
-  (team/lineup->total-projected-points optimal-high)
-
-  (team/lineup->string optimal-safe)
-  (team/lineup->total-salary optimal-safe)
-  (team/lineup->total-projected-points optimal-safe)
-
-  (team/lineup->string best-value-lineup)
-  (team/lineup->total-salary best-value-lineup)
-  (team/lineup->total-projected-points best-value-lineup)
-
+    (clojure.pprint/pprint (team/lineup->string best-value-lineup))
+    (println (team/lineup->total-salary best-value-lineup))
+    (println (format "%.2f" (team/lineup->total-projected-points best-value-lineup)))
+    )
   )
 
 
