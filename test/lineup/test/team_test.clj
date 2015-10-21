@@ -3,7 +3,8 @@
             [lineup.services.players :as players]
             [lineup.services.team :as team]
             [clojure.test.check.generators :as gen]
-            [lineup.test.utils :as utils]))
+            [lineup.test.utils :as utils]
+            [lineup.services.schedule :as schedule]))
 
 (def ^:private sample-team
   [{:position :qb
@@ -61,38 +62,44 @@
     (is (= 168.5 (team/lineup->total-projected-points sample-team)))))
 
 (comment
+  (let [unwanted-std-players (atom [])
+        unwanted-high-players (atom [])
+        unwanted-low-players (atom[])]
+    (doseq [x (range 2)]
+      ;; Parameters
+      (def week 6)
+      (def sunday (schedule/get-sunday-for-week week))
+      (def start-time (str sunday "T14:00"))
+      ; (def end-time (str sunday "T17:00"))
+      (def end-time nil)
+      ;; Narrow down players
+      (def standard-db-players (players/find-eligible-players week :ppr start-time end-time @unwanted-std-players))
+      (def high-db-players (players/find-eligible-players week :ppr_high start-time end-time))
+      (def safe-db-players (players/find-eligible-players week :ppr_low start-time end-time))
+      ;; Find best lineups
+      (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
+      (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
+      (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players)))
+      (def best-value-lineup (time (team/best-value-team standard-db-players)))
+      ;; Print out lineups
+      (clojure.pprint/pprint (team/lineup->string optimal-standard))
+      (println (team/lineup->total-salary optimal-standard))
+      (println (format "%.2f" (team/lineup->total-projected-points optimal-standard)))
 
-  (do
-    ;; Parameters
-    (def week 6)
-    (def start-time "2015-10-18T10:00")
-    (def end-time "2015-10-18T14:00")
-    ;; Narrow down players
-    (def standard-db-players (players/find-eligible-players week :ppr start-time end-time))
-    (def high-db-players (players/find-eligible-players week :ppr_high start-time end-time))
-    (def safe-db-players (players/find-eligible-players week :ppr_low start-time end-time))
-    ;; Find best lineups
-    (def optimal-standard (time (team/optimal-team-with-optimizations standard-db-players)))
-    (def optimal-high (time (team/optimal-team-with-optimizations high-db-players)))
-    (def optimal-safe (time (team/optimal-team-with-optimizations safe-db-players)))
-    (def best-value-lineup (time (team/best-value-team standard-db-players)))
-    ;; Print out lineups
-    (clojure.pprint/pprint (team/lineup->string optimal-standard))
-    (println (team/lineup->total-salary optimal-standard))
-    (println (format "%.2f" (team/lineup->total-projected-points optimal-standard)))
+      (clojure.pprint/pprint (team/lineup->string optimal-high))
+      (println (team/lineup->total-salary optimal-high))
+      (println (format "%.2f" (team/lineup->total-projected-points optimal-high)))
 
-    (clojure.pprint/pprint (team/lineup->string optimal-high))
-    (println (team/lineup->total-salary optimal-high))
-    (println (format "%.2f" (team/lineup->total-projected-points optimal-high)))
+      (clojure.pprint/pprint (team/lineup->string optimal-safe))
+      (println (team/lineup->total-salary optimal-safe))
+      (println (format "%.2f" (team/lineup->total-projected-points optimal-safe)))
 
-    (clojure.pprint/pprint (team/lineup->string optimal-safe))
-    (println (team/lineup->total-salary optimal-safe))
-    (println (format "%.2f" (team/lineup->total-projected-points optimal-safe)))
+      (reset! unwanted-std-players (apply conj @unwanted-std-players optimal-standard))
 
-    (clojure.pprint/pprint (team/lineup->string best-value-lineup))
-    (println (team/lineup->total-salary best-value-lineup))
-    (println (format "%.2f" (team/lineup->total-projected-points best-value-lineup)))
-    )
+      ; (clojure.pprint/pprint (team/lineup->string best-value-lineup))
+      ; (println (team/lineup->total-salary best-value-lineup))
+      ; (println (format "%.2f" (team/lineup->total-projected-points best-value-lineup)))
+      ))
   )
 
 

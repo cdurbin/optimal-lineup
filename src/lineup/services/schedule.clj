@@ -1,7 +1,8 @@
 (ns lineup.services.schedule
   "Functions related to the NFL schedule."
   (:require [lineup.data.ffn :as ffn]
-            [lineup.data.database :as db]))
+            [lineup.data.database :as db]
+            [clojure.string :as str]))
 
 (defn get-matchups-by-schedule
   "Return the teams by their start and end time."
@@ -12,9 +13,46 @@
   ([week start-time end-time]
    (db/get-matchups week start-time end-time)))
 
+(defn get-all-matchups
+  [week]
+  "Returns all matchups for the week"
+  (get-matchups-by-schedule week))
+
+#_(defn get-1pm-matchups
+    [week]
+    "Returns all 1:00 matchups for the week."
+    (get-matchups-by-schedule week start-time end-time))
+
+(defn get-sunday-for-week
+  [week]
+  "Figures out what the Sunday date is for the provided week."
+  (->> (map :time (get-matchups-by-schedule week nil nil))
+       (map #(str/replace % #"T.*" ""))
+       frequencies
+       (sort-by val)
+       reverse
+       first
+       first))
+
+
+
 (comment
+
+  (get-sunday-for-week 8)
+
   (count (get-matchups-by-schedule 6 "2015-10-18T16:00" "2015-10-18T17:00"))
-  (count (get-matchups-by-schedule 6 nil nil))
+  (->> (map :time (get-matchups-by-schedule 6 nil nil))
+       (map #(str/replace % #"T.*" ""))
+       frequencies
+       (sort-by val)
+       reverse
+       first
+       first
+       ; (group-by identity)
+       ; vals
+       ; (map count)
+       ; (apply max)
+       )
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
