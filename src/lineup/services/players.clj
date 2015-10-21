@@ -57,14 +57,17 @@
 (defn find-eligible-players
   "Get a list of all of the players to consider for lineups for the given week. Ensures players
   have a positive value for the provided field."
-  [week field start-time end-time]
-  (->> (filter-players-by-game-time (db/get-db-players week) week start-time end-time)
-       (remove #(or (= "Out" (:game_status %))
-                    (= "Doubtful" (:game_status %))
-                    (= "Suspended" (:game_status %))))
-       (filter #(> (field %) 0))
-       (map #(assoc % :position (keyword (str/lower-case (:position %)))))
-       (map #(assoc % :projection (field %)))
-       (map #(select-keys % [:position :name :salary :projection]))
-       (filter #(>= (:projection %) 2))))
+  ([week field start-time end-time]
+   (find-eligible-players week field start-time end-time nil))
+  ([week field start-time end-time unwanted-players]
+   (->> (filter-players-by-game-time (db/get-db-players week) week start-time end-time)
+        (remove #(or (= "Out" (:game_status %))
+                     (= "Doubtful" (:game_status %))
+                     (= "Suspended" (:game_status %))))
+        (filter #(> (field %) 0))
+        (map #(assoc % :position (keyword (str/lower-case (:position %)))))
+        (map #(assoc % :projection (field %)))
+        (map #(select-keys % [:position :name :salary :projection]))
+        (filter #(>= (:projection %) 2))
+        (remove #(contains? (set (map :name (vals unwanted-players))) (:name %))))))
 
