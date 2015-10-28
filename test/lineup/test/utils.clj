@@ -4,6 +4,7 @@
             [lineup.services.team :as team]
             [clojure.test.check.generators :as gen]
             [clojure.string :as str]
+            [clojure.java.io :as io]
             [clojure.set :as set]))
 
 (def ^:private random-salary-helper
@@ -36,13 +37,13 @@
 
 (def first-names
   "Collection of all potential first names"
-  (->> (slurp "resources/firstnames.txt")
+  (->> (slurp (io/resource "test/firstnames.txt"))
        str/split-lines
        (map str/capitalize)))
 
 (def last-names
   "Collection of all potential last names"
-  (-> (slurp "resources/lastnames.txt") str/split-lines))
+  (-> (slurp (io/resource "test/lastnames.txt")) str/split-lines))
 
 (defn random-name
   "Pick a random name"
