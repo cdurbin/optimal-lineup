@@ -8,7 +8,15 @@
                  [cheshire "5.5.0"]
                  [clj-http "2.0.0"]
                  [camel-snake-kebab "0.3.2"]
-                 [clj-time "0.11.0"]]
+                 [clj-time "0.11.0"]
+                 [enlive "1.1.6"]
+                 [compojure "1.4.0"]
+                 [ring/ring-core "1.4.0"]
+                 [ring/ring-json "0.4.0"]
+                 ;; My stuff
+                 [cdd/ws "0.1.0-SNAPSHOT"]
+                 [cdd/logger "0.1.0-SNAPSHOT"]
+                 [cdd/component "0.1.0-SNAPSHOT"]]
 
   :plugins [[lein-test-out "0.3.1"]
             [lein-exec "0.3.2"]]
