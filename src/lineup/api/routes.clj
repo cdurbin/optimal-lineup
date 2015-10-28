@@ -8,7 +8,11 @@
     [ring.middleware.params :as params]
     [ring.middleware.nested-params :as nested-params]
     [ring.middleware.keyword-params :as keyword-params]
-    [lineup.services.errors :as errors]))
+    [ring.middleware.resource :as resource]
+    [ring.middleware.content-type :as content-type]
+    [ring.middleware.not-modified :as not-modified]
+    [lineup.services.errors :as errors]
+    [clojure.java.io :as io]))
 
 ;; Routes I will need
 
@@ -20,7 +24,8 @@
   (routes
     (GET "/testing" {:keys [headers params request-context]}
       {:status 200
-       :body "I got here"})
+       :body "I got here"
+       :headers {"Content-type" "text/html"}})
     (route/not-found "Not Found")))
 
 (defn make-api [system]
@@ -29,4 +34,7 @@
       nested-params/wrap-nested-params
       errors/invalid-url-encoding-handler
       ring-json/wrap-json-body
-      params/wrap-params))
+      params/wrap-params
+      (resource/wrap-resource "public")
+      content-type/wrap-content-type
+      not-modified/wrap-not-modified))
