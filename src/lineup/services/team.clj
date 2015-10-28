@@ -185,7 +185,6 @@
 ;;
 ;; Pick optimal lineups
 ;;
-; ;; Parameters
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn get-top-lineups
@@ -208,13 +207,13 @@
 
 
   (do
-    (def week 6)
+    (def week 7)
     (def sunday (schedule/get-sunday-for-week week))
-    (def start-time (str sunday "T10:00"))
+    (def start-time (str sunday "T23:00"))
+    ; (def start-time "2015-10-22T10:00")
+    ; (def end-time (str sunday "T17:00"))
     (def end-time nil)
     (get-top-lineups week start-time end-time :ppr 5))
-
-
   )
 
 

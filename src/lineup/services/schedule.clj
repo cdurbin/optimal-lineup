@@ -48,10 +48,6 @@
        reverse
        first
        first
-       ; (group-by identity)
-       ; vals
-       ; (map count)
-       ; (apply max)
        )
   )
 
