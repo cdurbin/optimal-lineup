@@ -4,7 +4,7 @@
 (def db
   {:classname   "org.sqlite.JDBC"
    :subprotocol "sqlite"
-   :subname     "db/database.db"})
+   :subname     "db/database-2016.db"})
 
 (defn get-db-players
   "Get players from DB for the given week. Ignores players without a valid salary."
@@ -91,4 +91,3 @@
                     [:abbreviation "varchar(3)" "PRIMARY KEY"]
                     [:full_name "varchar(64)"]
                     [:short_name "varchar(32)"])))
-

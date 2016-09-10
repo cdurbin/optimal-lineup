@@ -207,16 +207,18 @@
 
 
   (do
-    (def week 8)
+    (def week 1)
     (def sunday (schedule/get-sunday-for-week week))
-    (def start-time (str sunday "T23:00"))
-    ; (def start-time "2015-11-01T15:00")
+    ; (def start-time "2015-11-29T12:00")
+    (def start-time (str sunday "T10:00"))
+    ; (def start-time nil)
+
     ; (def end-time (str sunday "T17:00"))
+    ; (def end-time "2015-12-20T01:00")
     (def end-time nil)
-    (get-top-lineups week start-time end-time :ppr 3))
-  )
+    (get-top-lineups week start-time end-time :ppr 3)))
 
 
-
-
-
+;; PG - Trey Burke
+;; SF - Jeff Green
+;; PF - Myles Turner

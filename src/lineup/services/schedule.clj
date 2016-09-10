@@ -38,7 +38,8 @@
 
 (comment
 
-  (get-sunday-for-week 8)
+  (get-all-matchups 16)
+  (get-sunday-for-week 12)
 
   (count (get-matchups-by-schedule 6 "2015-10-18T16:00" "2015-10-18T17:00"))
   (->> (map :time (get-matchups-by-schedule 6 nil nil))
@@ -47,9 +48,9 @@
        (sort-by val)
        reverse
        first
-       first
-       )
-  )
+       first))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -66,5 +67,3 @@
   "Get the season schedule and save it to the database."
   []
   (db/save-season-schedule (ffn/get-season-schedule)))
-
-
