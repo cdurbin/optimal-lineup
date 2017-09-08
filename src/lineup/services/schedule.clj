@@ -67,3 +67,7 @@
   "Get the season schedule and save it to the database."
   []
   (db/save-season-schedule (ffn/get-season-schedule)))
+
+(comment
+ (populate-schedule)
+ (populate-teams))

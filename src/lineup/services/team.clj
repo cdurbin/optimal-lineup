@@ -83,7 +83,7 @@
             player-maps (dissoc player-maps :wr :rb)
             player-maps (assoc player-maps :rb1 rb1-map :rb2 rb2-map :wr1 wr1-map :wr2 wr2-map :wr3 wr3-map)
             max-value-by-pos (into {} (for [[k v] player-maps]
-                                        {k (apply max (map :projection v))}))]
+                                        {k (apply max 0 (map :projection v))}))]
         (doall (for [qb (:qb player-maps)
                      rb1 (:rb1 player-maps)
                      wr1 (:wr1 player-maps)]
@@ -203,22 +203,81 @@
         (println (format "%.2f" (lineup->total-projected-points optimal-lineup)))
         (reset! unwanted-players (apply conj @unwanted-players optimal-lineup))))))
 
+(defn all-games-lineup
+  "Returns the top n lineups for a full schedule."
+  [week scoring-field n]
+  (get-top-lineups week nil nil scoring-field n))
+
+(defn main-lineup
+  "Returns the top n lineups for the main (1:00PM Sunday through the end of Sunday)."
+  [week scoring-field n]
+  (let [sunday (schedule/get-sunday-for-week week)
+        start-time (str sunday "T10:00")
+        end-time (str sunday "T23:59")]
+    (get-top-lineups week start-time end-time scoring-field n)))
+
+(defn one-pm-through-end
+  "Returns the top n lineups for 1:00PM Sunday through Monday night."
+  [week scoring-field n]
+  (let [sunday (schedule/get-sunday-for-week week)
+        start-time (str sunday "T12:00")]
+    (get-top-lineups week start-time nil scoring-field n)))
+
+(defn one-pm-only
+  "Returns the top n lineups for the 1:00PM only games."
+  [week scoring-field n]
+  (let [sunday (schedule/get-sunday-for-week week)
+        start-time (str sunday "T12:00")
+        end-time (str sunday "T15:30")]
+    (get-top-lineups week start-time end-time scoring-field n)))
+
+(defn four-pm-only
+  "Returns the top n lineups for 4:00PM only games."
+  [week scoring-field n]
+  (let [sunday (schedule/get-sunday-for-week week)
+        start-time (str sunday "T15:30")
+        end-time (str sunday "T19:00")]
+    (get-top-lineups week start-time end-time scoring-field n)))
+
+(defn four-pm-on
+  "Returns the top n lineups for 4:00PM Sunday through Monday night."
+  [week scoring-field n]
+  (let [sunday (schedule/get-sunday-for-week week)
+        start-time (str sunday "T15:30")
+        end-time (str sunday "T19:00")]
+    (get-top-lineups week start-time end-time scoring-field n)))
+
+(defn sunday-night-on
+  "Returns the top n lineups for the Sunday night and Monday night games."
+  [week scoring-field n]
+  (let [sunday (schedule/get-sunday-for-week week)
+        start-time (str sunday "T19:00")]
+    (get-top-lineups week start-time nil scoring-field n)))
+
 (comment
-
-
   (do
-    (def week 1)
+    (def week 16)
+    (def scoring-field :ppr)
+    (def n 3))
+  (all-games-lineup week scoring-field n)
+  (main-lineup week scoring-field n)
+  (one-pm-through-end week scoring-field n)
+  (one-pm-only week scoring-field n)
+  (four-pm-only week scoring-field n)
+  (four-pm-on week scoring-field n)
+  (sunday-night-on week scoring-field n))
+
+
+(comment
+ ;; Examples
+  (do
+    (def week 12)
     (def sunday (schedule/get-sunday-for-week week))
-    ; (def start-time "2015-11-29T12:00")
-    (def start-time (str sunday "T10:00"))
+    (def start-time nil)
+    (def end-time "2016-11-24T23:00")
+    ; (def start-time (str sunday "T14:20"))
     ; (def start-time nil)
 
     ; (def end-time (str sunday "T17:00"))
-    ; (def end-time "2015-12-20T01:00")
-    (def end-time nil)
+    ; (def end-time nil)
     (get-top-lineups week start-time end-time :ppr 3)))
-
-
-;; PG - Trey Burke
-;; SF - Jeff Green
-;; PF - Myles Turner
