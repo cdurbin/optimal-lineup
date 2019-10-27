@@ -6,8 +6,7 @@
 
 (def api-key
   "Key used when requesting data from FFN"
-  "***REMOVED***")
-  ; "test")
+  (System/getenv "FFNERD_API_KEY"))
 
 (def base-url
   "Base URL for FFN API."
