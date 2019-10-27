@@ -6,7 +6,7 @@
 
 (def api-key
   "Key used when requesting data from FFN"
-  "***REMOVED***")
+  "76hf5u4jnhdq")
   ; "test")
 
 (def base-url
