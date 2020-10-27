@@ -1,7 +1,7 @@
 (defproject cdd/lineup "0.1.0-SNAPSHOT"
   :description "Optimal lineup application"
 
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/test.check "0.7.0"]
                  [org.clojure/java.jdbc "0.4.2"]
                  [org.xerial/sqlite-jdbc "3.7.2"]
