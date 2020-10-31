@@ -1,8 +1,9 @@
 (ns lineup.services.schedule
   "Functions related to the NFL schedule."
-  (:require [lineup.data.ffn :as ffn]
-            [lineup.data.database :as db]
-            [clojure.string :as str]))
+  (:require
+   [lineup.data.ffn :as ffn]
+   [lineup.data.database :as db]
+   [clojure.string :as str]))
 
 (defn get-matchups-by-schedule
   "Return the teams by their start and end time."

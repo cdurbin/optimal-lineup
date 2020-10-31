@@ -2,10 +2,11 @@
   "Defines functions for creating, starting, and stopping the application. Applications are
   represented as a map of components. Design based on
   http://stuartsierra.com/2013/09/15/lifecycle-composition and related posts."
-  (:require [component.lifecycle :as lifecycle]
-            [logger.core :as log :refer (debug info warn error)]
-            [ws.api.web-server :as web]
-            [lineup.api.routes :as routes]))
+  (:require
+   [component.lifecycle :as lifecycle]
+   [logger.core :as log :refer (debug info warn error)]
+   [ws.api.web-server :as web]
+   [lineup.api.routes :as routes]))
 
 (def
   ^{:doc "Defines the order to start the components."
@@ -47,4 +48,3 @@
                                (reverse component-order))]
     (info "System stopped")
     stopped-system))
-

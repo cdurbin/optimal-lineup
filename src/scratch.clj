@@ -1,6 +1,7 @@
 (ns scratch
-  (:require [clj-http.client :as client]
-            [clojure.string :as str]))
+  (:require
+   [clj-http.client :as client]
+   [clojure.string :as str]))
 
 (def base-url
   "http://challenge.shopcurbside.com/")
