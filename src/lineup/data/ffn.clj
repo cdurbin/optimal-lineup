@@ -1,8 +1,9 @@
 (ns lineup.data.ffn
   "Functions for retrieving data from the FFN site"
-  (:require [clj-http.client :as http]
-            [cheshire.core :as json]
-            [camel-snake-kebab.core :as csk]))
+  (:require
+   [clj-http.client :as http]
+   [cheshire.core :as json]
+   [camel-snake-kebab.core :as csk]))
 
 (def api-key
   "Key used when requesting data from FFN"

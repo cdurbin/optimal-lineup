@@ -1,5 +1,6 @@
 (ns lineup.data.database
-  (:require [clojure.java.jdbc :refer :all]))
+  (:require
+   [clojure.java.jdbc :refer :all]))
 
 (def db
   {:classname   "org.sqlite.JDBC"

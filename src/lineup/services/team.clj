@@ -1,7 +1,8 @@
 (ns lineup.services.team
-  (require [clojure.string :as str]
-           [lineup.services.players :as players]
-           [lineup.services.schedule :as schedule]))
+  (:require
+   [clojure.string :as str]
+   [lineup.services.players :as players]
+   [lineup.services.schedule :as schedule]))
 
 (def max-total-salary (- 60000 4500))
 

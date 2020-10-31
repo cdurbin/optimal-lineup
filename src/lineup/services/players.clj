@@ -1,7 +1,8 @@
 (ns lineup.services.players
-  (require [clojure.string :as str]
-           [lineup.data.database :as db]
-           [lineup.services.schedule :as schedule]))
+  (require
+   [clojure.string :as str]
+   [lineup.data.database :as db]
+   [lineup.services.schedule :as schedule]))
 
 (def min-defense-salary 4000)
 (def min-player-salary 4500)
@@ -70,4 +71,3 @@
         (map #(select-keys % [:position :name :salary :projection]))
         (filter #(>= (:projection %) 2))
         (remove #(contains? (set (map :name (vals unwanted-players))) (:name %))))))
-

@@ -1,9 +1,10 @@
 (ns lineup.services.errors
   "Contains functions that will throw errors that when caught in the API will return the
   correct error code. Errors can be a list of strings."
-  (:require [cheshire.core :as json]
-            [clojure.string :as str]
-            [logger.core :as log :refer (debug info warn error)]))
+  (:require
+   [cheshire.core :as json]
+   [clojure.string :as str]
+   [logger.core :as log :refer (debug info warn error)]))
 
 (defn throw-service-error
   "Throws an instance of clojure.lang.ExceptionInfo that will contain a map with the type of
@@ -142,6 +143,3 @@
           :bad-request
           (str "Invalid URL encoding: " (str/replace (.getMessage e) #"URLDecoder: " "")))))
     (f request)))
-
-
-
