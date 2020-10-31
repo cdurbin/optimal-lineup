@@ -46,12 +46,18 @@
   [lineup]
   (reduce + (map :projection (vals lineup))))
 
+(defn validate-player-maps
+  "Throws an error if the player-maps are not valid"
+  [players]
+  (when-not (first (:qb players))
+    (throw (Exception. "Not enough players."))))
 
 (defn best-value-team
   "Returns a team of all the players with the best points per dollar projection."
   [players]
   (let [player-maps (into {} (for [[k v] (potential-players-by-position players true)]
                                {k (players/sort-by-value v)}))]
+    (validate-player-maps player-maps)
     {:qb (first (:qb player-maps))
      :rb1 (first (:rb player-maps))
      :rb2 (second (:rb player-maps))
@@ -60,7 +66,6 @@
      :wr3 (nth (:wr player-maps) 2)
      :te (first (:te player-maps))
      :def (first (:def player-maps))}))
-
 
 (defn optimal-team-with-optimizations
   "Return an optimal team. Ignore kickers."
@@ -258,7 +263,7 @@
 
 (comment
   (do
-    (def week 16)
+    (def week 15)
     (def scoring-field :ppr)
     (def n 3))
   (all-games-lineup week scoring-field n)
