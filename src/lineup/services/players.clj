@@ -1,4 +1,5 @@
 (ns lineup.services.players
+  "Namespace related to getting information back for a player."
   (require
    [clojure.string :as str]
    [lineup.data.database :as db]

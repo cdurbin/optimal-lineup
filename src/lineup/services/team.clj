@@ -1,4 +1,5 @@
 (ns lineup.services.team
+  "Namespace for building a lineup."
   (:require
    [clojure.string :as str]
    [lineup.services.players :as players]

@@ -1,4 +1,5 @@
 (ns lineup.data.database
+  "Functions for interacting directly with the database."
   (:require
    [clojure.java.jdbc :refer :all]))
 
